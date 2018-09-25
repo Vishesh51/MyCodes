@@ -1,0 +1,75 @@
+import java.io.*;
+import java.util.*;
+
+public class Solution {
+    
+    static int rangeMinimumQuery(int []segmentTree,int qlow,int qhigh,int len){
+        return rangeMinimumQuery(segmentTree,0,len-1,qlow,qhigh,0);
+    }
+    
+    static int rangeMinimumQuery(int segmentTree[],int low,int high,int qlow,int qhigh,int pos){
+        if(qlow <= low && qhigh >= high){
+            return segmentTree[pos];
+        }
+        if(qlow > high || qhigh < low){
+            return Integer.MIN_VALUE;
+        }
+        int mid = (low+high)/2;
+        return Math.max(rangeMinimumQuery(segmentTree, low, mid, qlow, qhigh, 2 * pos + 1),
+                rangeMinimumQuery(segmentTree, mid + 1, high, qlow, qhigh, 2 * pos + 2));
+    }
+    
+     static void constructMinSegmentTree(int segmentTree[], int input[], int low, int high,int pos){
+        if(low == high){
+            segmentTree[pos] = input[low];
+            return;
+        }
+        int mid = (low + high)/2;
+        constructMinSegmentTree(segmentTree, input, low, mid, 2 * pos + 1);
+        constructMinSegmentTree(segmentTree, input, mid + 1, high, 2 * pos + 2);
+        segmentTree[pos] = Math.max(segmentTree[2*pos+1], segmentTree[2*pos+2]);
+    }
+    
+    static public int nextPowerOf2(int num){
+        if(num ==0){
+            return 1;
+        }
+        if(num > 0 && (num & (num-1)) == 0){
+            return num;
+        }
+        while((num & (num-1)) > 0){
+            num = num & (num-1);
+        }
+        return num<<1;
+    }
+    
+    
+    
+    static int[] createSegmentTree(int[] input){
+        int len=nextPowerOf2(input.length);
+        int segmentTree[]=new int[2*len-1];
+        Arrays.fill(segmentTree,Integer.MIN_VALUE);
+        constructMinSegmentTree(segmentTree, input, 0, input.length - 1, 0);
+        return segmentTree;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int n=sc.nextInt();
+        int q=sc.nextInt();
+        int input[]=new int[n];
+        for(int i=0;i<n;i++) input[i]=sc.nextInt();
+        int segTree[]=createSegmentTree(input);
+        while(q-->0){
+            int d=sc.nextInt();
+            int min=Integer.MAX_VALUE;
+            for(int i=0;i<n;i++){
+                if(i+d-1<n)
+                min=Math.min(min,rangeMinimumQuery(segTree,i,i+d-1,input.length));
+                    else break;
+            }
+            System.out.println(min);
+        }
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    }
+}

@@ -1,0 +1,83 @@
+ static public void DFS(ArrayList<ArrayList<Integer>> graph, int v, boolean[] visited, ArrayList<Integer> comp) 
+    {
+        visited[v] = true;
+        for (int i = 0; i < graph.get(v).size(); i++)
+            if (!visited[graph.get(v).get(i)])
+                DFS(graph, graph.get(v).get(i), visited, comp);
+        comp.add(v);
+    }
+    
+    static public ArrayList<Integer> fillOrder(ArrayList<ArrayList<Integer>> graph, boolean[] visited,int max) 
+    {        
+        int V = max+1;
+        ArrayList<Integer> order = new ArrayList<Integer>();
+ 
+        for (int i =1; i < V; i++)
+            if (!visited[i])
+                DFS(graph, i, visited, order);
+        return order;
+    }
+	
+	public ArrayList<Integer>[] getTranspose(ArrayList<Integer>[] graph)
+    {
+        int V = graph.length;
+        ArrayList<Integer>[] g = new ArrayList[V];
+        for (int i = 0; i < V; i++)
+            g[i] = new ArrayList<Integer>();
+        for (int v = 0; v < V; v++)
+            for (int i = 0; i < graph[v].size(); i++)
+                g[graph[v].get(i)].add(v);
+        return g;
+    }
+    
+    static public ArrayList<ArrayList<Integer>> getScc(ArrayList<ArrayList<Integer>> graph,int max,ArrayList<ArrayList<Integer>> reverseGraph){
+        int V=max+1;
+        boolean visited[]=new boolean[V];
+        ArrayList<Integer> order=fillOrder(graph,visited,max);
+        visited = new boolean[V];
+        Collections.reverse(order);
+        ArrayList<ArrayList<Integer>> SCComp = new ArrayList<>();
+        for (int i = 0; i < order.size(); i++)
+        {
+            /** if stack is used for order pop out elements **/
+            int v = order.get(i);
+            if (!visited[v]) 
+            {
+                ArrayList<Integer> comp = new ArrayList<>();
+                DFS(reverseGraph, v, visited, comp);
+                SCComp.add(comp);
+            }
+        }
+        return SCComp;
+        
+    }
+	
+	public static void main(String[] args)
+    {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Kosaraju algorithm Test\n");
+        Kosaraju k = new Kosaraju();
+ 
+        System.out.println("Enter number of Vertices");
+        /** number of vertices **/
+        int V = scan.nextInt();
+        List<Integer>[] g = new List[V];
+        for (int i = 0; i < V; i++)
+            g[i] = new ArrayList<Integer>();
+ 
+        System.out.println("\nEnter number of edges");
+        int E = scan.nextInt();
+        /** all edges **/
+        System.out.println("Enter "+ E +" x, y coordinates");
+        for (int i = 0; i < E; i++)
+        {
+            int x = scan.nextInt();
+            int y = scan.nextInt();
+            /** add edge **/
+            g[x].add(y);
+        }
+        System.out.println("\nSCC : ");
+        /** print all strongly connected components **/
+        List<List<Integer>> scComponents = k.getSCComponents(g);
+        System.out.println(scComponents);    
+    }    

@@ -1,0 +1,75 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+	static PriorityQueue<Node> q;
+	static ArrayList<ArrayList<Node>> list;
+	static int distances[];
+	public static void main(String[] args) {
+		 Scanner sc = new Scanner(System.in);
+		 int t = sc.nextInt();
+		 while(t>0){
+			 int N = sc.nextInt();
+			 int M = sc.nextInt();
+			 q = new PriorityQueue<Node>(N+1);
+			 distances = new int[N+1];
+			 list = new ArrayList<ArrayList<Node>>(N+1);
+			 for(int i=0;i<=N;i++){
+				 list.add(new ArrayList<Node>(N+1));
+			 }
+			 for(int i=0;i<M;i++){
+				 int a = sc.nextInt();
+				 int b = sc.nextInt();
+				 int c = sc.nextInt();
+				 list.get(a).add(new Node(b, c));
+	                list.get(b).add(new Node(a, c));
+			 }
+			 int s = sc.nextInt();
+			 for(int i=0;i<=N;i++){
+				 if(i!=s)
+				 distances[i] = Integer.MAX_VALUE;
+				 else
+					 distances[i] = 0;
+			 }
+			 q.add(new Node(s,0));
+			 while(!q.isEmpty()){
+				 Node min = q.remove();
+				 int minCost = min.cost;
+				 int minNode = min.node;
+				 //identifying neighbour
+				 Iterator<Node> it = list.get(minNode).iterator();
+				 while(it.hasNext()){
+					 Node x = it.next();
+					 if(distances[x.node] >minCost+x.cost){
+						 distances[x.node]=minCost+x.cost;
+						 q.add(new Node(x.node,distances[x.node]));
+					 }
+				 }
+			 }
+			 for(int i=1; i<distances.length; i++){
+		            if(i!=s){
+		                System.out.print(((distances[i] == Integer.MAX_VALUE)?-1:distances[i]) + " ");
+		            }
+		        }
+		        System.out.println();
+			 t--;
+		 }
+	}
+
+	static class Node implements Comparable<Node>{
+		int node;
+		int cost;
+		public Node(int node,int cost){
+			this.node = node;
+			this.cost = cost;
+		}
+		 public int compareTo(Node x){
+		        return Integer.compare(this.cost, x.cost);
+		    }
+	}
+
+}

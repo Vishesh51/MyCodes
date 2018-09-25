@@ -1,0 +1,82 @@
+/**
+ *    author:  tourist
+ *    created: 29.09.2017 19:08:56       
+**/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = 1234;
+
+char s[N][N];
+int g[N][N];
+
+int main() {
+  int tt;
+  scanf("%d", &tt);
+  while (tt--) {
+    int n;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+      scanf("%s", s[i]);
+    }
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        if (s[i][j] == 'X') {
+          g[i][j] = -1;
+          continue;
+        }
+        set<int> w;
+        if (i > 0) {
+          w.insert(g[i - 1][j]);
+        }
+        if (j > 0) {
+          w.insert(g[i][j - 1]);
+        }
+        if (i > 0 && j > 0) {
+          w.insert(g[i - 1][j - 1]);
+        }
+        g[i][j] = 0;
+        while (w.find(g[i][j]) != w.end()) {
+          g[i][j]++;
+        }
+      }
+    }
+    int ans = 0;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        if (s[i][j] == 'K') {
+          ans ^= g[i][j];
+        }
+      }
+    }
+    if (ans == 0) {
+      puts("LOSE");
+    } else {
+      int cnt = 0;
+      for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+          if (s[i][j] == 'K') {
+            if (i > 0 && s[i - 1][j] != 'X') {
+              if ((g[i - 1][j] ^ g[i][j]) == ans) {
+                cnt++;
+              }
+            }
+            if (j > 0 && s[i][j - 1] != 'X') {
+              if ((g[i][j - 1] ^ g[i][j]) == ans) {
+                cnt++;
+              }
+            }
+            if (i > 0 && j > 0 && s[i - 1][j - 1] != 'X') {
+              if ((g[i - 1][j - 1] ^ g[i][j]) == ans) {
+                cnt++;
+              }
+            }
+          }
+        }
+      }
+      printf("WIN %d\n", cnt);
+    }
+  }
+  return 0;
+}

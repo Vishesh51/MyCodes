@@ -1,0 +1,5 @@
+for (Map.Entry<Long, Long> entry : mp.entrySet())
+        {
+            //System.out.println(entry.getKey() + "/" + entry.getValue());
+            v=((v%mod)*(((d-1)+(((long)Math.pow(entry.getKey(),(entry.getValue()+1))-1)/(entry.getKey()-1)))%mod))%mod;
+        }

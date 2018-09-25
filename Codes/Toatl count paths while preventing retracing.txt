@@ -1,0 +1,57 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+    static char secret[];
+    static int k;
+    static char board[][];
+    static long result=0;
+    static boolean vis[][];
+
+    static void countSecret(int i,int j,int sidx){
+        if(sidx==k-1){
+            if(secret[sidx]==board[i][j])   result++;
+            return;
+        }
+        if(secret[sidx]==board[i][j]){
+            for(int q=-1;q<2;q++){
+                for(int w=-1;w<2;w++){
+                    if(q==0 && w==0) continue;
+                    if((i+q)>=0 && (j+w)>=0 && (i+q)<8 && (j+w)<8 && !vis[i+q][j+w]){
+                        vis[i+q][j+w]=true;
+                        countSecret(i+q,j+w,sidx+1);
+                        vis[i+q][j+w]=false;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        k = in.nextInt();
+        secret = in.next().toCharArray();
+        board = new char[8][8];
+        String temp;
+
+        for(int board_i = 0; board_i < 8; board_i++){
+            temp = in.next();
+            for(int i=0;i<8;i++)
+                board[board_i][i]=temp.charAt(i);
+        }
+        vis=new boolean[8][8];
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                vis[i][j]=true;
+                countSecret(i,j,0);
+                vis[i][j]=false;
+            }
+        }
+        System.out.println(result);
+        in.close();
+    }
+}

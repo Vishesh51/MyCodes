@@ -1,0 +1,55 @@
+import java.util.*;
+import java.math.*;
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int diameterOfBinaryTree(TreeNode root) {
+        if(root == null){
+            return 0;
+        }
+        int lheight=height(root.left);
+        int rheight=height(root.right);
+        int ldia=diameterOfBinaryTree(root.left);
+        int rdia=diameterOfBinaryTree(root.right);
+        int fd=Math.max(lheight+rheight,Math.max(ldia,rdia));
+        return fd;
+    }
+    public int height(TreeNode p){
+        int h;
+        if(p == null)
+            return 0;
+        int left=height(p.left);
+        int right=height(p.right);
+        if(left>right){
+             h=1+left;
+        }else{
+             h=1+right;
+        }
+        return h;
+    }
+}
+
+/////OR
+
+class Solution {
+    int ans;
+    public int diameterOfBinaryTree(TreeNode root) {
+        ans = 1;
+        depth(root);
+        return ans - 1;
+    }
+    public int depth(TreeNode node) {
+        if (node == null) return 0;
+        int L = depth(node.left);
+        int R = depth(node.right);
+        ans = Math.max(ans, L+R+1);
+        return Math.max(L, R) + 1;
+    }
+}

@@ -1,0 +1,43 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+	//2,1
+	//5,6
+	static int val1=0,val2=0; 
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        int mat[][]=new int[9][9];
+		int x1=sc.nextInt();
+		int y1=sc.nextInt();
+		int x2=sc.nextInt();
+		int y2=sc.nextInt();
+		//boolean valid[]=new boolean[9][9];
+		val1=(9-y2); val2=x2;
+		System.out.println(val1+" "+val2);
+		System.out.println((9-y1)+" "+x1);
+		int val=countPaths(mat,(9-y1),(x1));
+		System.out.println(val);
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+    }
+	static int countPaths(int mat[][],int row,int col){
+		if(!isValid(mat,row,col)) return 0;
+		if(isAtEnd(row,col)) return 1;
+		if(mat[row][col]==0) {mat[row][col]=countPaths(mat,row+2,col+1)+countPaths(mat,row+2,col-1)+countPaths(mat,row+1,col+2)+countPaths(mat,row+1,col-2)+countPaths(mat,row-2,col+1)+countPaths(mat,row-2,col-1)+countPaths(mat,row-1,col+2)+
+		countPaths(mat,row-1,col-2);}
+		return mat[row][col];
+	}
+	
+	static boolean isValid(int mat[][],int row,int col){
+		if(row<=0 || col<=0 || row>8 || col>8) return false;
+		return true;
+	}
+	
+	static boolean isAtEnd(int row,int col){
+		if(row==val1&&col==val2) return true;
+		return false;
+	}
+}

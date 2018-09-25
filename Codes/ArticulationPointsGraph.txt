@@ -1,0 +1,95 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+ 
+class Main
+{
+	static int vis[];
+	static int dt[];
+	static int reach[];
+	static boolean art[];
+	static int par[];
+	static int t;
+	static ArrayList<Integer> a[];
+	public static void dfs(int u)
+	{
+		vis[u] = 1;
+		dt[u] = t;
+		reach[u] = dt[u];
+		t++;
+		for(int j=0;j<a[u].size();j++)
+		{
+			int v = a[u].get(j);
+			if(v == par[u])
+				continue;
+			else if(vis[v] == 1)
+			{
+				reach[u] = Math.min(reach[u], dt[v]);
+			}
+			else
+			{
+				par[v] = u;
+				dfs(v);
+				reach[u] = Math.min(reach[u], reach[v]);
+				if(reach[v] >= dt[u])
+				{
+					art[u] = true;
+				}
+			}
+		}
+	}
+	
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int t = Integer.parseInt(br.readLine());
+		while(t-->0)
+		{
+			String tokens[] = br.readLine().split(" ");
+			int n = Integer.parseInt(tokens[0]);
+			int e = Integer.parseInt(tokens[1]);
+			int c = Integer.parseInt(tokens[2]);
+			a = new ArrayList[n];
+			vis = new int[n];
+			dt = new int[n];
+			reach = new int[n];
+			par = new int[n];
+			art = new boolean[n];
+			for(int i=0;i<n;i++)
+			{
+				a[i] = new ArrayList<Integer>();
+			}
+			for(int i=0;i<e;i++)
+			{
+				String temp[] = br.readLine().split(" ");
+				int u = Integer.parseInt(temp[0]);
+				int v = Integer.parseInt(temp[1]);
+				a[u].add(v);
+				a[v].add(u);
+			}
+			
+			par[0] = -1;
+			dfs(0);
+			int cnt = 0;
+			for(int i = 0; i < n;i++)
+			{
+				if(par[i] == 0)
+					cnt++;
+			}
+			if(cnt > 1)
+				art[0] = true;
+			else
+				art[0] = false;
+
+			int ans = 0;
+			for(int i=0;i<n;i++)
+			{
+				if(art[i])
+					ans += c;
+			}
+			System.out.println(ans);
+		}
+		
+	}
+}
+ 

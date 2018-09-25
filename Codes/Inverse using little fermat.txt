@@ -1,0 +1,23 @@
+long long pow(ll a, ll b)
+{
+    long long x=1,y=a; 
+    while(b > 0)
+    {
+        if(b%2 == 1)
+        {
+            x=(x*y);
+            if(x>MOD) x%=MOD;
+        }
+        y = (y*y);
+        if(y>MOD) y%=MOD; 
+        b /= 2;
+    }
+    return x;
+}
+
+static long invfact(ll n)
+{
+    return pow(n,MOD-2);
+}
+
+Fermat’s little theorem states that if m is a prime and a is an integer co-prime to m, then ap - 1 will be evenly divisible by m. That is a^{m-1} \equiv 1 \pmod{m}. or a^{m-2} \equiv a^{-1} \pmod{m}. Here’s a sample C++ code:

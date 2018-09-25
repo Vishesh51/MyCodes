@@ -1,0 +1,164 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package solution;
+
+/**
+ *
+ * @author vishe
+ */
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.util.regex.Pattern;
+
+
+public class Solution {
+    private static Random rand = new Random();
+    
+    private static class Node {
+        int number;
+        int priority;
+        int size;
+        Node left;
+        Node right;
+        
+        Node (int number) {
+            this.number = number;
+            priority = rand.nextInt(100000);
+        }
+    }
+    
+    private static class Result {
+        Node left;
+        Node right;
+        
+        Result(Node left, Node right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+    
+    private Node treap;
+    
+    private int getSize(Node n) {
+        return n == null ? 0 : n.size;
+    }
+    
+    private void updateSize(Node n) {
+        if (n != null) {
+            n.size = getSize(n.left) + getSize(n.right) + 1;
+        }
+    }
+    
+    private Node merge(Node nodeLeft, Node nodeRight) {
+        Node root = null;
+        if (nodeLeft == null || nodeRight == null) {
+            root = nodeLeft == null ? nodeRight : nodeLeft;
+        }  else if (nodeLeft.priority > nodeRight.priority) {
+            nodeLeft.right = merge(nodeLeft.right, nodeRight);
+            root = nodeLeft;
+        } else {
+            nodeRight.left = merge(nodeLeft, nodeRight.left);
+            root = nodeRight;
+        }
+        updateSize(root);
+        return root;
+    }
+    
+	public Result split(Node root, int minRight) {
+		if (root == null)
+			return new Result(null, null);
+		if (getSize(root.left) >= minRight) {
+			Result sub = split(root.left, minRight);
+			root.left = sub.right;
+			updateSize(root);
+			sub.right = root;
+			return sub;
+		} else {
+			Result sub = split(root.right, minRight - getSize(root.left) - 1);
+			root.right = sub.left;
+			updateSize(root);
+			sub.left = root;
+			return sub;
+		}
+	}
+      
+    private Node buildImplicitTreap(Node node, int[] a) {
+        for (int i = 0; i < a.length; i++) {
+            node = merge(node, new Node(a[i]));
+        }
+        return node;
+    }
+    
+    private Node moveToFront(Node root, int i, int j) {
+        Result resJ = split(root, j);
+        Result resI = split(resJ.left, i - 1);
+        root = merge(resI.left, resJ.right);
+        root = merge(resI.right, root);
+        return root;
+    }
+    
+    private Node moveBack(Node root, int i, int j) {
+        Result resJ = split(root, j);
+        Result resI = split(resJ.left, i - 1);
+        root = merge(resI.left, resJ.right);
+        root = merge(root, resI.right);        
+        return root;
+    }
+    
+    private void print(Node root) {
+        if (root == null) {
+            return;
+        }
+        print(root.left);
+        System.out.print(root.number + " ");
+        print(root.right);
+    }
+    
+    private int getMin(Node root) {
+        while (root.left != null) {
+            root = root.left;
+        }
+        return root.number;
+    }
+    
+    private int getMax(Node root) {
+        while (root.right != null) {
+            root = root.right;
+        }
+        return root.number;
+    }    
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[] a = new int[n];
+        for (int i = 0; i < n; i++) {
+            a[i] = sc.nextInt();
+        }
+        Solution sol = new Solution();
+        sol.treap = sol.buildImplicitTreap(sol.treap, a);
+        for (int i = 0; i < m; i++) {
+            int c = sc.nextInt();
+            int from = sc.nextInt();
+            int to = sc.nextInt();
+            if (c == 1) {
+                sol.treap = sol.moveToFront(sol.treap, from, to);
+            } else {
+                sol.treap = sol.moveBack(sol.treap, from, to);
+            }
+        }
+        System.out.println(Math.abs(sol.getMin(sol.treap) - sol.getMax(sol.treap)));
+        sol.print(sol.treap);
+        System.out.println();
+    }
+}
+
